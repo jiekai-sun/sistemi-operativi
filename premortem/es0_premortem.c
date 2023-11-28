@@ -5,75 +5,76 @@
 
 struct thread_info {
     int index;
-    pthread_t thread_id;
+    pthread_t threadId;
 };
 
 void *function(void *pointer) {
-    pthread_t thread_id;
-    int thread_result;
-    struct thread_info *t_info;
-    struct thread_info *pointer_to_struct;
+    pthread_t threadId;
+    int threadCreationOutcome;
+    struct thread_info *threadInfo;
+    struct thread_info *structPointer;
 
     struct thread_info thread_info = *(struct thread_info*)pointer;
-    printf("index: |%d| and thread_id: |%ld|\n", thread_info.index, thread_info.thread_id);
+    printf("index: %d\n", thread_info.index);
 
     if (thread_info.index < 100) {
-        t_info = malloc(sizeof(struct thread_info));
-        if (t_info == NULL) {
+        threadInfo = malloc(sizeof(struct thread_info));
+        if (threadInfo == NULL) {
             perror("malloc failure");
             pthread_exit(NULL);
         }
-        t_info->index = thread_info.index;
-        t_info->thread_id = pthread_self();
+        threadInfo->index = thread_info.index;
+        threadInfo->threadId = pthread_self();
 
-        pointer_to_struct = malloc(sizeof(struct thread_info));
-        if (pointer_to_struct == NULL) {
+        structPointer = malloc(sizeof(struct thread_info));
+        if (structPointer == NULL) {
             perror("malloc failure");
             pthread_exit(NULL);
         }
-        pointer_to_struct = t_info;
+        structPointer = threadInfo;
 
         usleep(1000);
 
-        pointer_to_struct->index++;
+        structPointer->index++;
 
-        thread_result = pthread_create(&thread_id, NULL, function, pointer_to_struct);
-        if (thread_result) {
-            printf("ERROR: return code from pthread_create() is %d\n", thread_result);
+        threadCreationOutcome = pthread_create(&threadId, NULL, function, structPointer);
+        if (threadCreationOutcome) {
+            printf("ERROR: return code from pthread_create() is %d\n", threadCreationOutcome);
             exit(-1);
         }
     }
-    pthread_join(thread_info.thread_id, NULL);
+    pthread_join(thread_info.threadId, NULL);
     pthread_exit(NULL);
+    return NULL;
 }
 int main() {
-    pthread_t thread_id;
-    int thread_result;
-    struct thread_info *t_info;
-    struct thread_info *pointer_to_struct;
+    pthread_t threadId;
+    int threadCreationOutcome;
+    struct thread_info *threadInfo;
+    struct thread_info *structPointer;
 
-    t_info = malloc(sizeof(struct thread_info));
-    if (t_info == NULL) {
+    threadInfo = malloc(sizeof(struct thread_info));
+    if (threadInfo == NULL) {
         perror("malloc failure");
         pthread_exit(NULL);
     }
-    t_info->index = 0;
-    t_info->thread_id = pthread_self();
+    threadInfo->index = 0;
+    threadInfo->threadId = pthread_self();
 
-    pointer_to_struct = malloc(sizeof(struct thread_info));
-    if (pointer_to_struct == NULL) {
+    structPointer = malloc(sizeof(struct thread_info));
+    if (structPointer == NULL) {
         perror("malloc failure");
         pthread_exit(NULL);
     }
-    pointer_to_struct = t_info;
+    structPointer = threadInfo;
 
     usleep(1000);
 
-    pointer_to_struct->index++;
+    structPointer->index++;
 
-    thread_result = pthread_create(&thread_id, NULL, function, pointer_to_struct);
-    if (thread_result) {
-        printf("ERROR: return code from pthread_create() is %d\n", thread_result);
+    threadCreationOutcome = pthread_create(&threadId, NULL, function, structPointer);
+    if (threadCreationOutcome) {
+        printf("ERROR: return code from pthread_create() is %d\n", threadCreationOutcome);
         exit(-1);
     }
 
